@@ -10,7 +10,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 
-
 ChartJS.register(ArcElement, Tooltip, Legend,ChartDataLabels);
 
 const APIChart = ({t1,t2,c1,c2,allt}) => {
@@ -22,10 +21,10 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
   const [todos, setTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
   const [incompleteTodos, setIncompleteTodos] = useState([]);
-  const [completedCount, setCompletedCount] = useState();
-  const [incompleteCount, setIncompleteCount] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(5);
+  const [completedCount, setCompletedCount] = useState();
+  const [incompleteCount, setIncompleteCount] = useState();
   const [downloadTodoData, setdownloadTodoData] = useState({});
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
@@ -88,45 +87,38 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
     }
     },
   };
-  useEffect(()=>{
-        setCompletedTodos(t1);
-        setIncompleteTodos(t2);
-        setCompletedCount(c1);
-        setIncompleteCount(c2);
-        setDefChartData(allt);
-  },[]);
 
   useEffect(() => {
-    
-    //     const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
-    //     const tds = response.data;
-    //     const completedt = tds.filter(todo => todo.completed);
-    //     const incompletet = tds.filter(todo => !todo.completed);
-    //     const completec = completedt.length;
-    //     const incompletec = incompletet.length;
-        // setCompletedTodos(t1);
-        // setIncompleteTodos(t2);
-        // setCompletedCount(c1);
-        // setIncompleteCount(c2);
-        // console.log('Data fetched:',todos);
+    const getTodos = async () => {
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
+        const tds = response.data;
+        const completedt = tds.filter(todo => todo.completed);
+        const incompletet = tds.filter(todo => !todo.completed);
+        const completec = completedt.length;
+        const incompletec = incompletet.length;
+        setCompletedTodos(completedt);
+        setIncompleteTodos(incompletet);
+        setCompletedCount(completec);
+        setIncompleteCount(incompletec);
         if (selectedTodoStatus === 'All') {
           setDefChartData({
             labels: ['Completed', 'Incomplete'],
             datasets: [
               {
                 label: 'Todos',
-                data: [c1, c2],
+                data: [completec, incompletec],
                 backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
               },
             ],
-          });
+          });   
         } else if (selectedTodoStatus === 'Completed') {
           setDefChartData({
             labels: ['Completed'],
             datasets: [
               {
                 label: 'Todos',
-                data: [c1],
+                data: [completec],
                 backgroundColor: ['rgba(75, 192, 192, 0.6)'],
               },
             ],
@@ -137,13 +129,18 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
             datasets: [
               {
                 label: 'Todos',
-                data: ["",c2],
+                data: ["",incompletec],
                 backgroundColor: ['rgba(255, 99, 132, 0.6)'],
               },
             ],
           });
         }
-   
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+      }
+    };
+
+    getTodos();
   }, [selectedTodoStatus]);
 
   const handleTodoStatusChange = (e) => {
@@ -159,12 +156,6 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
     setFinalRecords(currentRecords); 
   }, [clickedData, currentPage, recordsPerPage, indexOfFirstRecord, indexOfLastRecord]);
   
-  // const finalRecords = useMemo(() => {
-  //   const indexOfLastRecord = currentPage * recordsPerPage;
-  //   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  //   return clickedData.slice(indexOfFirstRecord, indexOfLastRecord);
-  // }, [clickedData, currentPage, recordsPerPage]);
-
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -201,11 +192,33 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
       doc.text(`Selected Todos Status: ${dt.Label}`, 10, 10);
       html2canvas(canvasref.current.canvas).then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
-        doc.addImage(imgData, 'PNG', 20, 20, 180, 180);
+        doc.addImage(imgData, 'PNG', 20, 60, 180, 180);
         doc.save(`${dt.Label}_Todos.pdf`);
       });
     };
     
+    // const dExcel = () => {
+    //   const data = [
+    //     { Label: 'Selected Todo Status', Value: selectedTodoStatus }, 
+    //     { Label: 'Label', Value: 'Value' }, 
+    //     { Label: dt.Label, Value: dt.Value } 
+    //   ];
+    
+    //   const ws = XLSX.utils.json_to_sheet(data, { skipHeader: true }); 
+    //   const wscols = Object.keys(data[0]).map(key => {
+    //     const maxLength = data.reduce((max, record) => {
+    //       return Math.max(max, record[key] ? record[key].toString().length : 0);
+    //     }, key.length); 
+    //     return { width: maxLength + 2 }; 
+    //   });
+    
+    //   ws['!cols'] = wscols; 
+    
+    //   const wb = XLSX.utils.book_new();
+    //   XLSX.utils.book_append_sheet(wb, ws, 'Todos Data');
+    
+    //   XLSX.writeFile(wb, `${dt.Label}_Todos_${selectedTodoStatus}.xlsx`);
+    // };
     const dExcel = () => {
       const data = [
         { Label: 'Selected Todo Status', Value: selectedTodoStatus }, 
@@ -213,31 +226,51 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
         { Label: dt.Label, Value: dt.Value } 
       ];
     
-      const ws = XLSX.utils.json_to_sheet(data, { skipHeader: true }); 
+      const ws = XLSX.utils.json_to_sheet(data, { skipHeader: true });
+    
+      // Define column widths
       const wscols = Object.keys(data[0]).map(key => {
         const maxLength = data.reduce((max, record) => {
           return Math.max(max, record[key] ? record[key].toString().length : 0);
-        }, key.length); 
-        return { width: maxLength + 2 }; 
+        }, key.length);
+        return { width: maxLength + 2 };
       });
+      
+      ws['!cols'] = wscols;
     
-      ws['!cols'] = wscols; 
+      // Apply background color and styles to the header row
+      const headerStyle = {
+        fill: {
+          fgColor: { rgb: 'FFFF00' } // Yellow background color
+        },
+        font: {
+          bold: true, // Bold font for headers
+        }
+      };
     
+      // Apply the style to specific cells (you can apply it to all rows if necessary)
+      ws['A1'].s = headerStyle; 
+      ws['A2'].s = headerStyle; 
+      ws['B2'].s = headerStyle; 
+    
+      // Create workbook and append the worksheet
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Todos Data');
     
+      // Write file
       XLSX.writeFile(wb, `${dt.Label}_Todos_${selectedTodoStatus}.xlsx`);
     };
     
+    
     return (
-      <Modal show={showModal} onHide={onClose} size="lg" centered className='p-4' style={{width:'100%'}}>
+      <Modal show={showModal} onHide={onClose} size="xl" centered className='p-4'>
         <Modal.Header closeButton>
-          <Col lg='10'>
+          <Col md='10'>
           <Row >
-            <Col md='6'>
+            <Col md='8' className='d-flex'>
               <Modal.Title>Todos Status: {dt.Label}</Modal.Title>
             </Col>
-            <Col md='4' className='mr-0'>
+            <Col md='2' className='d-flex justify-content-end'>
               <DropdownButton id="dropdown-basic-button" title="Export Options" >
               <Dropdown.Item onClick={dCSV}>CSV</Dropdown.Item>
               <Dropdown.Item onClick={dPDF}>PDF</Dropdown.Item>
@@ -300,14 +333,32 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
     );
   };
 
+  // const downloadCSV = () => {
+  //   const labels = defChartData.labels;
+  //   const data = defChartData.datasets[0].data;
+  //   const csvContent =`Selected Todos Status:${selectedTodoStatus}\nLabel,Value\n` + labels.map((label, idx) => `${label},${data[idx]}`).join('\n');
+  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  //   saveAs(blob, 'chart_data.csv');
+  // };
   const downloadCSV = () => {
     const labels = defChartData.labels;
     const data = defChartData.datasets[0].data;
-    const csvContent =`Selected Todos Status:${selectedTodoStatus}\nLabel,Value\n` + labels.map((label, idx) => `${label},${data[idx]}`).join('\n');
+  
+    // Create padded strings based on longest label or value length
+    const maxLabelLength = Math.max(...labels.map(label => label.length));
+    const maxValueLength = Math.max(...data.map(val => val.toString().length));
+  
+    const csvContent = `Selected Todos Status: ${selectedTodoStatus}\nLabel,Value\n` +
+      labels.map((label, idx) => {
+        const paddedLabel = label.padEnd(maxLabelLength, ' ');
+        const paddedValue = data[idx].toString().padEnd(maxValueLength, ' ');
+        return `${paddedLabel},${paddedValue}`;
+      }).join('\n');
+      
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'chart_data.csv');
   };
-
+  
   const downloadPDF = () => {
     const labels = defChartData.labels;
     const data = defChartData.datasets[0].data;
@@ -339,7 +390,7 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
       );
     }
   return (
-    <div className="mx-auto text-center">
+    <div className="mx-auto text-center" >
       <Form as={Row} className="align-items-center m-0">
           <Form.Group as={Col} md={6} className="d-flex mr-2">
             <Form.Control as="select" value={selectedTodoStatus} onChange={handleTodoStatusChange}>

@@ -1,4 +1,4 @@
-import React, { Fragment,useState ,useEffect } from "react";
+import React, { Fragment,useState ,useEffect,createContext } from "react";
 import { Col, Container, Dropdown, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from 'axios';
@@ -32,8 +32,7 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 am4core.useTheme(am4themes_animated);
 
 
-//My imports
-
+export const context=createContext();
 
 
 const Index = () => {
@@ -44,7 +43,8 @@ const [ict,setIncompleteTodos]=useState([]);
 const [ctc, setCompletedCount] = useState();
 const [ictc, setIncompleteCount] = useState();
 const [tods,setTods]=useState([]);
-
+const [compldt,setcompldt]=useState({});
+const [incompldt,setincompldt]=useState({});
 useEffect(() => {
   const getTodos = async () => {
     try {
@@ -59,6 +59,8 @@ useEffect(() => {
       setIncompleteTodos(incompletet);
       setCompletedCount(completec);
       setIncompleteCount(incompletec);
+      setcompldt({'Label':'Completed','Value':completec});
+      setincompldt({'Label':'Incomplete','Value':incompletec});
     } catch (error) {
       console.error('Error fetching todos:', error);
     }
@@ -139,16 +141,16 @@ useEffect(() => {
               </Col>
             </Row>
           </Col>
-          <Col lg="12" border className='m-3'>
+          <Col lg="12">
             <Row>
               <Col md='4'>
                 <APIChart t1={ct} t2={ict} c1={ctc} c2={ictc} allt={tods} />
               </Col>
               <Col md='4'>
-                <FirstChart ct={ct} ctc={ctc} />
+                <FirstChart cmt={ct} cmtc={ctc} dt={compldt} />
               </Col>
               <Col md='4'>
-                <SecondChart ict={ict} ictc={ictc} />
+                <SecondChart icmt={ict} icmtc={ictc} dt={incompldt} />
               </Col>
             </Row>
           </Col>
