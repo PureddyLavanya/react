@@ -9,10 +9,12 @@ import 'jspdf-autotable';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import './styles.css';
+
 
 ChartJS.register(ArcElement, Tooltip, Legend,ChartDataLabels);
 
-const APIChart = ({t1,t2,c1,c2,allt}) => {
+const APIChart = ({allt}) => {
   const chartRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [clickedData, setClickedData] = useState([]);
@@ -44,17 +46,55 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
     ],
   });
 
+  // const coptions = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: 
+  //     { 
+  //       position: 'top' 
+  //     },
+  //     title: 
+  //     { 
+  //       display: true, text: `${chartTitle}` 
+  //     },
+  //     tooltip: {
+  //       callbacks: {
+  //         label: function (tooltipItem) {
+  //           return `${tooltipItem.label}: ${tooltipItem.raw} todos`;
+  //         },
+  //       },
+  //     },
+  //     datalabels: {
+  //       color: '#000',
+  //       anchor:'center',
+  //       align: 'center',
+  //       formatter: (value, context) => {
+  //         // const label = context.chart.data.labels[context.dataIndex];
+  //         return ` ${value} `;
+  //       },
+  //     },
+  //   },
+  //   onClick: (event, elements) => {
+  //     if (elements.length > 0) {
+  //       console.log(elements);
+  //       const {index }= elements[0];
+  //       if (index===0) {
+  //         setdownloadTodoData({'Label':'Completed','Value':completedCount});
+  //         setClickedData(completedTodos);
+  //       } 
+  //       else if(index===1){
+  //         setdownloadTodoData({'Label':'Incomplete','Value':incompleteCount});
+  //         setClickedData(incompleteTodos);
+  //       } 
+  //       setShowModal(true);
+  //   }
+  //   },
+  // };
   const coptions = {
     responsive: true,
     plugins: {
-      legend: 
-      { 
-        position: 'top' 
-      },
-      title: 
-      { 
-        display: true, text: `${chartTitle}` 
-      },
+      legend: { position: 'top' },
+      title: { display: true, text: `${chartTitle}` },
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
@@ -64,7 +104,7 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
       },
       datalabels: {
         color: '#000',
-        anchor:'center',
+        anchor: 'center',
         align: 'center',
         formatter: (value, context) => {
           return ` ${value} `;
@@ -73,75 +113,144 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
     },
     onClick: (event, elements) => {
       if (elements.length > 0) {
-        console.log(elements);
-        const {index }= elements[0];
-        if (index===0) {
-          setdownloadTodoData({'Label':'Completed','Value':completedCount});
-          setClickedData(completedTodos);
-        } 
-        else if(index===1){
-          setdownloadTodoData({'Label':'Incomplete','Value':incompleteCount});
-          setClickedData(incompleteTodos);
-        } 
+        const { index } = elements[0];
+        let clickedTodos = [];
+        let label = '';
+        let value = 0;
+  
+        if (selectedTodoStatus === 'All') {
+          if (index === 0) {
+            clickedTodos = completedTodos;
+            label = 'Completed';
+            value = completedCount;
+          } else if (index === 1) {
+            clickedTodos = incompleteTodos;
+            label = 'Incomplete';
+            value = incompleteCount;
+          }
+        } else if (selectedTodoStatus === 'Completed') {
+          if (index === 0) {
+            clickedTodos = completedTodos;
+            label = 'Completed';
+            value = completedCount;
+          }
+        } else if (selectedTodoStatus === 'Incomplete') {
+          if (index === 1 || index === 0) { // handle case when only incomplete is displayed
+            clickedTodos = incompleteTodos;
+            label = 'Incomplete';
+            value = incompleteCount;
+          }
+        }
+  
+        setdownloadTodoData({ Label: label, Value: value });
+        setClickedData(clickedTodos);
         setShowModal(true);
-    }
+      }
     },
   };
+  
+  // useEffect(() => {
+  //   // const getTodos = async () => {
+  //   //   try {
+  //   //     const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
+  //   //     const tds = response.data;
+  //       const tds=allt;
+  //       const completedt = tds.filter(todo => todo.completed);
+  //       const incompletet = tds.filter(todo => !todo.completed);
+  //       const completedc = completedt.length;
+  //       const incompletec = incompletet.length;
+  //       setCompletedTodos(completedt);
+  //       setIncompleteTodos(incompletet);
+  //       setCompletedCount(completedc);
+  //       setIncompleteCount(incompletec);
+  //       if (selectedTodoStatus === 'All') {
+  //         setDefChartData({
+  //           labels: ['Completed', 'Incomplete'],
+  //           datasets: [
+  //             {
+  //               label: 'Todos',
+  //               data: [completedCount, incompleteCount],
+  //               backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+  //             },
+  //           ],
+  //         });   
+  //       } else if (selectedTodoStatus === 'Completed') {
+  //         setDefChartData({
+  //           labels: ['Completed'],
+  //           datasets: [
+  //             {
+  //               label: 'Todos',
+  //               data: [completedCount],
+  //               backgroundColor: ['rgba(75, 192, 192, 0.6)'],
+  //             },
+  //           ],
+  //         });
+  //       } else if (selectedTodoStatus === 'Incomplete') {
+  //         setDefChartData({
+  //           labels: ['Incomplete'],
+  //           datasets: [
+  //             {
+  //               label: 'Todos',
+  //               data: ["",incompleteCount],
+  //               backgroundColor: ['rgba(255, 99, 132, 0.6)'],
+  //             },
+  //           ],
+  //         });
+  //       }
+  //   //   } catch (error) {
+  //   //     console.error('Error fetching todos:', error);
+  //   //   }
+  //   // };
 
+  //   // getTodos();
+  // }, [selectedTodoStatus]);
   useEffect(() => {
-    const getTodos = async () => {
-      try {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
-        const tds = response.data;
-        const completedt = tds.filter(todo => todo.completed);
-        const incompletet = tds.filter(todo => !todo.completed);
-        const completec = completedt.length;
-        const incompletec = incompletet.length;
-        setCompletedTodos(completedt);
-        setIncompleteTodos(incompletet);
-        setCompletedCount(completec);
-        setIncompleteCount(incompletec);
-        if (selectedTodoStatus === 'All') {
-          setDefChartData({
-            labels: ['Completed', 'Incomplete'],
-            datasets: [
-              {
-                label: 'Todos',
-                data: [completec, incompletec],
-                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-              },
-            ],
-          });   
-        } else if (selectedTodoStatus === 'Completed') {
-          setDefChartData({
-            labels: ['Completed'],
-            datasets: [
-              {
-                label: 'Todos',
-                data: [completec],
-                backgroundColor: ['rgba(75, 192, 192, 0.6)'],
-              },
-            ],
-          });
-        } else if (selectedTodoStatus === 'Incomplete') {
-          setDefChartData({
-            labels: ['Incomplete'],
-            datasets: [
-              {
-                label: 'Todos',
-                data: ["",incompletec],
-                backgroundColor: ['rgba(255, 99, 132, 0.6)'],
-              },
-            ],
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching todos:', error);
-      }
-    };
-
-    getTodos();
-  }, [selectedTodoStatus]);
+    const tds = allt;
+    const completedt = tds.filter(todo => todo.completed);
+    const incompletet = tds.filter(todo => !todo.completed);
+    setCompletedTodos(completedt);
+    setIncompleteTodos(incompletet);
+    setCompletedCount(completedt.length);
+    setIncompleteCount(incompletet.length);
+  }, [allt]);
+  
+  useEffect(() => {
+    if (selectedTodoStatus === 'All') {
+      setDefChartData({
+        labels: ['Completed', 'Incomplete'],
+        datasets: [
+          {
+            label: 'Todos',
+            data: [completedCount, incompleteCount],
+            backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+          },
+        ],
+      });
+    } else if (selectedTodoStatus === 'Completed') {
+      setDefChartData({
+        labels: ['Completed'],
+        datasets: [
+          {
+            label: 'Todos',
+            data: [completedCount],
+            backgroundColor: ['rgba(75, 192, 192, 0.6)'],
+          },
+        ],
+      });
+    } else if (selectedTodoStatus === 'Incomplete') {
+      setDefChartData({
+        labels: ['Incomplete'],
+        datasets: [
+          {
+            label: 'Todos',
+            data: [incompleteCount],
+            backgroundColor: ['rgba(255, 99, 132, 0.6)'],
+          },
+        ],
+      });
+    }
+  }, [completedCount, incompleteCount, selectedTodoStatus]);
+  
 
   const handleTodoStatusChange = (e) => {
     setSelectedTodoStatus(e.target.value);
@@ -263,7 +372,7 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
     
     
     return (
-      <Modal show={showModal} onHide={onClose} size="xl" centered className='p-4'>
+      <Modal show={showModal} onHide={onClose} size="xl" centered className='mdl'>
         <Modal.Header closeButton>
           <Col md='10'>
           <Row >
@@ -407,7 +516,7 @@ const APIChart = ({t1,t2,c1,c2,allt}) => {
             </DropdownButton>
           </Col>
       </Form>
-      <Doughnut data={defChartData} options={coptions} ref={chartRef} className='m-1'/>
+      <Doughnut data={defChartData} options={coptions} ref={chartRef} style={{ height: '400px', width: '300px' }}/>
       {showModal && (
         <DataModal onClose={() => setShowModal(false)} data={clickedData} canvasref={chartRef} dt={downloadTodoData}/>
       )}

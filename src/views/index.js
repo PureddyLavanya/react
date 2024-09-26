@@ -1,4 +1,4 @@
-import React, { Fragment,useState ,useEffect,createContext } from "react";
+import React, { Fragment,useState ,useEffect, } from "react";
 import { Col, Container, Dropdown, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from 'axios';
@@ -32,41 +32,68 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 am4core.useTheme(am4themes_animated);
 
 
-export const context=createContext();
-
 
 const Index = () => {
 
-const bgImg = require("../assets/images/page-img//38.jpg");
-const [ct,setCompletedTodos]=useState([]);
-const [ict,setIncompleteTodos]=useState([]);
-const [ctc, setCompletedCount] = useState();
-const [ictc, setIncompleteCount] = useState();
+// const bgImg = require("../assets/images/page-img//38.jpg");
+
 const [tods,setTods]=useState([]);
-const [compldt,setcompldt]=useState({});
-const [incompldt,setincompldt]=useState({});
+const [prds,setProducts]=useState([]);
+const [psts,setPosts]=useState([]);
+const [menclCount,setmenclCount]=useState();
+const [womenclCount,setwomenclCount]=useState();
+const [jewCount,setjewCount]=useState();
+const [electCount,setelectCount]=useState();
 useEffect(() => {
   const getTodos = async () => {
     try {
       const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
       const tds = response.data;
       setTods(tds);
-      const completedt = tds.filter(todo => todo.completed);
-      const incompletet = tds.filter(todo => !todo.completed);
-      const completec = completedt.length;
-      const incompletec = incompletet.length;
-      setCompletedTodos(completedt);
-      setIncompleteTodos(incompletet);
-      setCompletedCount(completec);
-      setIncompleteCount(incompletec);
-      setcompldt({'Label':'Completed','Value':completec});
-      setincompldt({'Label':'Incomplete','Value':incompletec});
     } catch (error) {
       console.error('Error fetching todos:', error);
     }
   };
   getTodos();
 },[]);
+useEffect(()=>{
+  const getProducts= async () =>{
+    try{
+      const response= await axios.get('https://fakestoreapi.com/products');
+      const ps=response.data;
+      const d1=ps.filter(p=>p.category ===`men's clothing`);
+      const d2=ps.filter(p=>p.category ===`women's clothing`);
+      const d3=ps.filter(p=>p.category ==='jewelery');
+      const d4=ps.filter(p=>p.category ==='electronics');
+      setmenclCount(d1.length);
+      setwomenclCount(d2.length);
+      setjewCount(d3.length);
+      setelectCount(d4.length);
+      setProducts(ps);
+    }
+    catch(error){
+      console.log('Error fetching products:',error);
+    }
+  }
+  getProducts();
+},[]);
+useEffect(()=>{
+  const getPosts=async () =>{
+    try{
+      const response=await axios.get('https://jsonplaceholder.typicode.com/posts');
+      const pst=response.data;
+      setPosts(pst);
+    }
+    catch(error){
+      console.log('Error fetching posts:',error);
+    }
+  }
+  getPosts();
+},[])
+
+console.log(tods);
+console.log(prds);
+console.log(psts);
   return (
     <Fragment>
      <Col lg="12">
@@ -80,9 +107,9 @@ useEffect(() => {
                       </div>
                       <div className="text-end">
                         <h2 className="mb-0">
-                          <span className="counter">600</span>
+                          <span className="counter">{menclCount}</span>
                         </h2>
-                        <h5 className="">Meters Count </h5>
+                        <h5 className="">Men's Clothing</h5>
                       </div>
                     </div>
                   </div>
@@ -97,9 +124,9 @@ useEffect(() => {
                       </div>
                       <div className="text-end">
                         <h2 className="mb-0">
-                          <span className="counter">450</span>
+                          <span className="counter">{womenclCount}</span>
                         </h2>
-                        <h5 className="">Active Meters</h5>
+                        <h5 className="">Women's Clothing</h5>
                       </div>
                     </div>
                   </div>
@@ -114,9 +141,9 @@ useEffect(() => {
                       </div>
                       <div className="text-end">
                         <h2 className="mb-0">
-                          <span className="counter">3500</span>
+                          <span className="counter">{jewCount}</span>
                         </h2>
-                        <h5 className="">Deactive Meters</h5>
+                        <h5 className="">Jewelery</h5>
                       </div>
                     </div>
                   </div>
@@ -131,9 +158,9 @@ useEffect(() => {
                       </div>
                       <div className="text-end">
                         <h2 className="mb-0">
-                          <span className="counter">500</span>
+                          <span className="counter">{electCount}</span>
                         </h2>
-                        <h5 className="">Today Active</h5>
+                        <h5 className="">Electronic</h5>
                       </div>
                     </div>
                   </div>
@@ -142,17 +169,17 @@ useEffect(() => {
             </Row>
           </Col>
           <Col lg="12">
-            <Row>
-              <Col md='4'>
-                <APIChart t1={ct} t2={ict} c1={ctc} c2={ictc} allt={tods} />
-              </Col>
-              <Col md='4'>
-                <FirstChart cmt={ct} cmtc={ctc} dt={compldt} />
-              </Col>
-              <Col md='4'>
-                <SecondChart icmt={ict} icmtc={ictc} dt={incompldt} />
-              </Col>
-            </Row>
+              <Row>
+                <Col md='4'>
+                  <APIChart allt={tods} />
+                </Col>
+                <Col md='4'>
+                  <FirstChart prods={prds} />
+                </Col>
+                <Col md='4'>
+                  <SecondChart allpsts={psts} />
+                </Col>
+              </Row>
           </Col>
     </Fragment>
   );
