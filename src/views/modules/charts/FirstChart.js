@@ -88,8 +88,16 @@ const FirstChart = ({prods}) => {
       }
     },
     scales: {
+      x:{
+        grid:{
+          display:false,
+        }
+      },
       y: {
         beginAtZero: true, 
+        grid:{
+          display:false,
+        }
       },
     },
   };

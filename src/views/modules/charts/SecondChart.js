@@ -90,8 +90,16 @@ const SecondChart = ({allpsts}) => {
       }
     },
     scales: {
+      x:{
+        grid:{
+          display:false,
+        }
+      },
       y: {
         beginAtZero: true, 
+        grid:{
+          display:false,
+        }
       },
     },
   };

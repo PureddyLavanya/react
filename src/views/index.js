@@ -106,10 +106,10 @@ console.log(psts);
                         <i className="ri-user-fill"></i>
                       </div>
                       <div className="text-end">
+                      <h5 className="">Meter Count</h5>
                         <h2 className="mb-0">
                           <span className="counter">{menclCount}</span>
                         </h2>
-                        <h5 className="">Men's Clothing</h5>
                       </div>
                     </div>
                   </div>
@@ -123,10 +123,10 @@ console.log(psts);
                         <i className="ri-women-fill"></i>
                       </div>
                       <div className="text-end">
+                      <h5 className="">Active Meters</h5>
                         <h2 className="mb-0">
                           <span className="counter">{womenclCount}</span>
                         </h2>
-                        <h5 className="">Women's Clothing</h5>
                       </div>
                     </div>
                   </div>
@@ -140,10 +140,10 @@ console.log(psts);
                         <i className="ri-group-fill"></i>
                       </div>
                       <div className="text-end">
+                      <h5 className="">De-active Meters</h5>
                         <h2 className="mb-0">
                           <span className="counter">{jewCount}</span>
                         </h2>
-                        <h5 className="">Jewelery</h5>
                       </div>
                     </div>
                   </div>
@@ -157,10 +157,10 @@ console.log(psts);
                         <i className="ri-hospital-line"></i>
                       </div>
                       <div className="text-end">
+                      <h5 className="">Today Active</h5>
                         <h2 className="mb-0">
                           <span className="counter">{electCount}</span>
                         </h2>
-                        <h5 className="">Electronic</h5>
                       </div>
                     </div>
                   </div>
