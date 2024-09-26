@@ -45,51 +45,6 @@ const APIChart = ({allt}) => {
       },
     ],
   });
-
-  // const coptions = {
-  //   responsive: true,
-  //   plugins: {
-  //     legend: 
-  //     { 
-  //       position: 'top' 
-  //     },
-  //     title: 
-  //     { 
-  //       display: true, text: `${chartTitle}` 
-  //     },
-  //     tooltip: {
-  //       callbacks: {
-  //         label: function (tooltipItem) {
-  //           return `${tooltipItem.label}: ${tooltipItem.raw} todos`;
-  //         },
-  //       },
-  //     },
-  //     datalabels: {
-  //       color: '#000',
-  //       anchor:'center',
-  //       align: 'center',
-  //       formatter: (value, context) => {
-  //         // const label = context.chart.data.labels[context.dataIndex];
-  //         return ` ${value} `;
-  //       },
-  //     },
-  //   },
-  //   onClick: (event, elements) => {
-  //     if (elements.length > 0) {
-  //       console.log(elements);
-  //       const {index }= elements[0];
-  //       if (index===0) {
-  //         setdownloadTodoData({'Label':'Completed','Value':completedCount});
-  //         setClickedData(completedTodos);
-  //       } 
-  //       else if(index===1){
-  //         setdownloadTodoData({'Label':'Incomplete','Value':incompleteCount});
-  //         setClickedData(incompleteTodos);
-  //       } 
-  //       setShowModal(true);
-  //   }
-  //   },
-  // };
   const coptions = {
     responsive: true,
     plugins: {
@@ -135,7 +90,7 @@ const APIChart = ({allt}) => {
             value = completedCount;
           }
         } else if (selectedTodoStatus === 'Incomplete') {
-          if (index === 1 || index === 0) { // handle case when only incomplete is displayed
+          if (index === 1 || index === 0) { 
             clickedTodos = incompleteTodos;
             label = 'Incomplete';
             value = incompleteCount;
@@ -149,61 +104,7 @@ const APIChart = ({allt}) => {
     },
   };
   
-  // useEffect(() => {
-  //   // const getTodos = async () => {
-  //   //   try {
-  //   //     const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
-  //   //     const tds = response.data;
-  //       const tds=allt;
-  //       const completedt = tds.filter(todo => todo.completed);
-  //       const incompletet = tds.filter(todo => !todo.completed);
-  //       const completedc = completedt.length;
-  //       const incompletec = incompletet.length;
-  //       setCompletedTodos(completedt);
-  //       setIncompleteTodos(incompletet);
-  //       setCompletedCount(completedc);
-  //       setIncompleteCount(incompletec);
-  //       if (selectedTodoStatus === 'All') {
-  //         setDefChartData({
-  //           labels: ['Completed', 'Incomplete'],
-  //           datasets: [
-  //             {
-  //               label: 'Todos',
-  //               data: [completedCount, incompleteCount],
-  //               backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-  //             },
-  //           ],
-  //         });   
-  //       } else if (selectedTodoStatus === 'Completed') {
-  //         setDefChartData({
-  //           labels: ['Completed'],
-  //           datasets: [
-  //             {
-  //               label: 'Todos',
-  //               data: [completedCount],
-  //               backgroundColor: ['rgba(75, 192, 192, 0.6)'],
-  //             },
-  //           ],
-  //         });
-  //       } else if (selectedTodoStatus === 'Incomplete') {
-  //         setDefChartData({
-  //           labels: ['Incomplete'],
-  //           datasets: [
-  //             {
-  //               label: 'Todos',
-  //               data: ["",incompleteCount],
-  //               backgroundColor: ['rgba(255, 99, 132, 0.6)'],
-  //             },
-  //           ],
-  //         });
-  //       }
-  //   //   } catch (error) {
-  //   //     console.error('Error fetching todos:', error);
-  //   //   }
-  //   // };
-
-  //   // getTodos();
-  // }, [selectedTodoStatus]);
+  
   useEffect(() => {
     const tds = allt;
     const completedt = tds.filter(todo => todo.completed);
@@ -305,29 +206,6 @@ const APIChart = ({allt}) => {
         doc.save(`${dt.Label}_Todos.pdf`);
       });
     };
-    
-    // const dExcel = () => {
-    //   const data = [
-    //     { Label: 'Selected Todo Status', Value: selectedTodoStatus }, 
-    //     { Label: 'Label', Value: 'Value' }, 
-    //     { Label: dt.Label, Value: dt.Value } 
-    //   ];
-    
-    //   const ws = XLSX.utils.json_to_sheet(data, { skipHeader: true }); 
-    //   const wscols = Object.keys(data[0]).map(key => {
-    //     const maxLength = data.reduce((max, record) => {
-    //       return Math.max(max, record[key] ? record[key].toString().length : 0);
-    //     }, key.length); 
-    //     return { width: maxLength + 2 }; 
-    //   });
-    
-    //   ws['!cols'] = wscols; 
-    
-    //   const wb = XLSX.utils.book_new();
-    //   XLSX.utils.book_append_sheet(wb, ws, 'Todos Data');
-    
-    //   XLSX.writeFile(wb, `${dt.Label}_Todos_${selectedTodoStatus}.xlsx`);
-    // };
     const dExcel = () => {
       const data = [
         { Label: 'Selected Todo Status', Value: selectedTodoStatus }, 
