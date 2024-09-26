@@ -320,18 +320,11 @@ const APIChart = ({allt}) => {
     );
   };
 
-  // const downloadCSV = () => {
-  //   const labels = defChartData.labels;
-  //   const data = defChartData.datasets[0].data;
-  //   const csvContent =`Selected Todos Status:${selectedTodoStatus}\nLabel,Value\n` + labels.map((label, idx) => `${label},${data[idx]}`).join('\n');
-  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  //   saveAs(blob, 'chart_data.csv');
-  // };
+  
   const downloadCSV = () => {
     const labels = defChartData.labels;
     const data = defChartData.datasets[0].data;
   
-    // Create padded strings based on longest label or value length
     const maxLabelLength = Math.max(...labels.map(label => label.length));
     const maxValueLength = Math.max(...data.map(val => val.toString().length));
   
