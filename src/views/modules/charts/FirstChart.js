@@ -91,6 +91,10 @@ const FirstChart = ({prods}) => {
       x:{
         grid:{
           display:false,
+        },
+        ticks: {
+          minRotation: 45, 
+          maxRotation: 45,
         }
       },
       y: {
@@ -272,7 +276,7 @@ const FirstChart = ({prods}) => {
     <div className="mx-auto">
       <Row lg='12'>
         <Col column lg='8' className='d-flex '>
-          <Bar data={defChartData} options={options} style={{ height: '430px', width: '300px' }}  ref={chartRef}/>
+          <Bar data={defChartData} options={options}  style={{ height: '400px', width: '300px' }}  ref={chartRef}/>
         </Col>
         <Col column lg='2' className='d-flex justify-content-end'>
           <Dropdown>

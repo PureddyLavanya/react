@@ -47,6 +47,7 @@ const APIChart = ({allt}) => {
   });
   const coptions = {
     responsive: true,
+    // maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top' },
       title: { display: true, text: `${chartTitle}` },

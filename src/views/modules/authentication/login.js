@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Button, Col, Container, Form, Row } from 'react-bootstrap'
@@ -7,6 +7,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination,Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination';
+import axios from 'axios';
 
 // Image
 import logo from "../../../assets/images/logo.png"
@@ -15,25 +16,26 @@ import i1 from '../../../assets/images/login/i1'
 import i3 from '../../../assets/images/login/i3'
 const LoginPage = () => {
     const navigator=useNavigate();
-  const users=[
-    {
-        userid:'lavanya@p',
-        useremail:'lavanyap@gmail.com',
-        userpassword:'lav@123'
-    },
-    {   
-        userid:'pavani#33',
-        useremail:'pavani@gmail.com',
-        userpassword:'pav@99'
-    },
-    {   
-        userid:'tejaswini@r',
-        useremail:'teja@gmail.com',
-        userpassword:'teja@1909'
-    }
-  ];
+//   const users=[
+//     {
+//         userid:'lavanya@p',
+//         useremail:'lavanyap@gmail.com',
+//         userpassword:'lav@123'
+//     },
+//     {   
+//         userid:'pavani#33',
+//         useremail:'pavani@gmail.com',
+//         userpassword:'pav@99'
+//     },
+//     {   
+//         userid:'tejaswini@r',
+//         useremail:'teja@gmail.com',
+//         userpassword:'teja@1909'
+//     }
+//   ];
+      const [users,setusers]=useState([]);
   const [formData,setFormData]=useState({
-    useremail:'',
+    username:'',
     userpassword:''
   });
   const [errors,setErrors]=useState({});
@@ -44,16 +46,37 @@ const LoginPage = () => {
         [name]: value,
     });
 };
+   useEffect(()=>{
+    const getUsers= async ()=>{
+        try{
+            const response=await axios.get('https://dummyjson.com/users');
+            const usrs=response.data.users;
+            setusers(usrs);
+        }
+        catch(error){
+            console.log('Error in fetching users');
+        }
+    };
+    getUsers();
+   },[]);
+   console.log(users);
+//    {
+//     users.map(u=>{
+//         console.log(u.username)
+//         console.log(u.password)
+//     }
+//     )
+//    }
   function handlesubmit(e){
     e.preventDefault();
-    const user=users.find(u=>u.useremail===formData.useremail&&u.userpassword===formData.userpassword);
+    const user=users.find(u=>u.username===formData.username&&u.password===formData.userpassword);
     const newErrors = validateForm(formData);
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0 ) {
             if(user){
             console.log('Form submitted successfully!');
-            navigator('/index',{state:user.userid});
+            navigator('/index',{state:user.username});
             }
             else{
                 alert('Invalid user details.Try Again!')
@@ -66,10 +89,10 @@ const LoginPage = () => {
   const validateForm = (data) => {
     const errors = {};
 
-    if (!data.useremail.trim()) {
-        errors.useremail = 'Email is required!';
-    } else if (!/^[a-zA-Z]+@+gmail.com/.test(data.useremail)) {
-        errors.useremail = 'Email is invalid!';
+    if (!data.username) {
+        errors.username = 'Email is required!';
+    } else if (data.username.length>15) {
+        errors.username = 'Username should have max 15 characters!';
     }
 
     if (!data.userpassword) {
@@ -113,15 +136,15 @@ const LoginPage = () => {
                             <p>Enter your email address and password to access admin panel.</p>
                             <Form className="mt-4">
                                 <Form.Group className='form-group'>
-                                    <Form.Label htmlFor="exampleInputEmail1" className="mb-2">Email address</Form.Label>
-                                    <Form.Control type="email" className="form-control mb-0" id="exampleInputEmail1" placeholder="Enter email" name="useremail" value={formData.useremail} onChange={handleChange} />
-                                    {errors&& (<span className='text-danger text-center'>{errors.useremail}</span>)}
+                                    <Form.Label htmlFor="exampleInputUserName1" className="mb-2">User Name</Form.Label>
+                                    <Form.Control type="text" className="form-control mb-0" id="exampleInputUserName1" placeholder="Enter User Name.." name="username" value={formData.username} onChange={handleChange} />
+                                    {errors&& (<span className='text-danger text-center'>{errors.username}</span>)}
                                 </Form.Group>
                                 <div className="d-flex justify-content-between my-2">
                                     <Form.Label htmlFor="exampleInputPassword1" className='mb-0'>Password</Form.Label>
                                     <Link to="/recover-password" className="float-end">Forgot password?</Link>
                                 </div>
-                                <Form.Control type="password" className="form-control mb-0" id="exampleInputPassword1" placeholder="Password" name="userpassword" value={formData.userpassword} onChange={handleChange} />
+                                <Form.Control type="password" className="form-control mb-0" id="exampleInputPassword1" placeholder="Enter Password..." name="userpassword" value={formData.userpassword} onChange={handleChange} />
                                 {errors&& (<span className='text-danger text-center'>{errors.userpassword}</span>)}
                                 <div className="d-flex w-100 justify-content-between  align-items-center mt-3 w-100">
                                     <div className="custom-control custom-checkbox d-inline-block mt-2 pt-1">

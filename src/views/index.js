@@ -5,6 +5,9 @@ import axios from 'axios';
 import APIChart from "./modules/charts/APIChart";
 import FirstChart from './modules/charts/FirstChart';
 import SecondChart from './modules/charts/SecondChart';
+// import '../../src/views/modules/charts/styles.css';
+import { RiBillLine } from 'react-icons/ri'; // Importing the meter icon
+// import myicon from '../assets/images/user/metericon';
 
 //apexcharts
 import Chart from "react-apexcharts";
@@ -103,7 +106,7 @@ console.log(psts);
                   <div className="iq-card-body iq-bg-primary rounded-4">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="rounded-circle iq-card-icon bg-primary">
-                        <i className="ri-user-fill"></i>
+                        <RiBillLine/>
                       </div>
                       <div className="text-end">
                       <h5 className="">Meter Count</h5>
@@ -120,7 +123,7 @@ console.log(psts);
                   <div className="iq-card-body iq-bg-warning rounded-4">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="rounded-circle iq-card-icon bg-warning">
-                        <i className="ri-women-fill"></i>
+                         <RiBillLine/>
                       </div>
                       <div className="text-end">
                       <h5 className="">Active Meters</h5>
@@ -137,7 +140,7 @@ console.log(psts);
                   <div className="iq-card-body iq-bg-danger rounded-4">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="rounded-circle iq-card-icon bg-danger">
-                        <i className="ri-group-fill"></i>
+                        <RiBillLine/>
                       </div>
                       <div className="text-end">
                       <h5 className="">De-active Meters</h5>
@@ -154,7 +157,7 @@ console.log(psts);
                   <div className="iq-card-body iq-bg-info rounded-4">
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="rounded-circle iq-card-icon bg-info">
-                        <i className="ri-hospital-line"></i>
+                        <RiBillLine/>
                       </div>
                       <div className="text-end">
                       <h5 className="">Today Active</h5>
@@ -170,13 +173,13 @@ console.log(psts);
           </Col>
           <Col lg="12">
               <Row>
-                <Col md='4'>
+                <Col md='4' >
                   <APIChart allt={tods} />
                 </Col>
                 <Col md='4'>
                   <FirstChart prods={prds} />
                 </Col>
-                <Col md='4'>
+                <Col md='4' >
                   <SecondChart allpsts={psts} />
                 </Col>
               </Row>

@@ -9,8 +9,6 @@ import { useRef,useState,useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import './styles.css';
 
-
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const SecondChart = ({allpsts}) => {
@@ -93,6 +91,10 @@ const SecondChart = ({allpsts}) => {
       x:{
         grid:{
           display:false,
+        },
+        ticks: {
+          minRotation: 45, 
+          maxRotation: 45, 
         }
       },
       y: {
