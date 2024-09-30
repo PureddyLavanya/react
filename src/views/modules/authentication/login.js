@@ -16,30 +16,13 @@ import i1 from '../../../assets/images/login/i1'
 import i3 from '../../../assets/images/login/i3'
 const LoginPage = () => {
     const navigator=useNavigate();
-//   const users=[
-//     {
-//         userid:'lavanya@p',
-//         useremail:'lavanyap@gmail.com',
-//         userpassword:'lav@123'
-//     },
-//     {   
-//         userid:'pavani#33',
-//         useremail:'pavani@gmail.com',
-//         userpassword:'pav@99'
-//     },
-//     {   
-//         userid:'tejaswini@r',
-//         useremail:'teja@gmail.com',
-//         userpassword:'teja@1909'
-//     }
-//   ];
-      const [users,setusers]=useState([]);
-  const [formData,setFormData]=useState({
+    const [users,setusers]=useState([]);
+    const [formData,setFormData]=useState({
     username:'',
     userpassword:''
-  });
-  const [errors,setErrors]=useState({});
-  const handleChange = (e) => {
+        });
+    const [errors,setErrors]=useState({});
+    const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
         ...formData,
@@ -58,15 +41,7 @@ const LoginPage = () => {
         }
     };
     getUsers();
-   },[]);
-   console.log(users);
-//    {
-//     users.map(u=>{
-//         console.log(u.username)
-//         console.log(u.password)
-//     }
-//     )
-//    }
+   },[])
   function handlesubmit(e){
     e.preventDefault();
     const user=users.find(u=>u.username===formData.username&&u.password===formData.userpassword);

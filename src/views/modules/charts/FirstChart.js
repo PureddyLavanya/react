@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { saveAs } from 'file-saver';
 import { useEffect, useRef,useState } from 'react';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import './styles.css';
 
 
@@ -194,33 +194,49 @@ const FirstChart = ({prods}) => {
         doc.save(`${mtitle}_productsdata.pdf`);
       });
     }
-    function dExcel() {
-      const introRow = [{ Label: `Category of Product Choosen: ${mtitle}` }];
-      const header = ['ID', 'Title', 'Price', 'Rating']; 
-      const data = dt.map(record => ({
-        ID: record.id,
-        Title: record.title,
-        Price: record.price,
-        Rating: record.rating.rate
-      }));
-      const ws = XLSX.utils.json_to_sheet(introRow, { skipHeader: true });
-      XLSX.utils.sheet_add_json(ws, data, { origin: -1, header: header });
     
-      const wscols = header.map((col, index) => {
-        const maxLength = Math.max(
-          col.length,
-          ...data.map(row => (row[col] ? row[col].toString().length : 0)) 
-        );
-        return { width: maxLength + 2 }; 
+    const dExcel = async () => {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Product Data');
+    
+      worksheet.addRow([`Category of Product Chosen: ${mtitle}`]);
+    
+      const header = ['ID', 'Title', 'Price', 'Rating'];
+      const headerRow = worksheet.addRow(header);
+    
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFF00' }, 
+        };
       });
     
-      ws['!cols'] = wscols; 
+      dt.forEach((record) => {
+        worksheet.addRow([record.id, record.title, record.price, record.rating.rate]);
+      });
     
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Product Data');
+      worksheet.columns.forEach((column) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const columnLength = cell.value ? cell.value.toString().length : 10;
+          if (columnLength > maxLength) {
+            maxLength = columnLength;
+          }
+        });
+        column.width = maxLength + 2; 
+      });
     
-      XLSX.writeFile(wb, `${mtitle}_productsdata.xlsx`);
-    }
+      worksheet.autoFilter = {
+        from: 'A2',
+        to: 'D2',
+      };
+    
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `${mtitle}_productsdata.xlsx`);
+    };
     
     return (
         <Modal show={showModal} onHide={onClose} size="xl" centered className='mdl'>

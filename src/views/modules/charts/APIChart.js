@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Modal, Button, DropdownButton, Dropdown, Table, Form, Row, Col, ButtonGroup } from 'react-bootstrap';
-import axios from 'axios';
+// import axios from 'axios';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import './styles.css';
 
 
@@ -34,6 +34,7 @@ const APIChart = ({allt}) => {
   const [totalPages,settotalPages]=useState();
   const [indexOfFirstRecord,setindexOfFirstRecord]=useState();
   const [indexOfLastRecord,setindexOfLastRecord]=useState();
+  const [todocategory,settodocategory]=useState();
   
   const [defChartData, setDefChartData] = useState({
     labels: [],
@@ -100,6 +101,7 @@ const APIChart = ({allt}) => {
   
         setdownloadTodoData({ Label: label, Value: value });
         setClickedData(clickedTodos);
+        settodocategory(label);
         setShowModal(true);
       }
     },
@@ -192,7 +194,7 @@ const APIChart = ({allt}) => {
     setSortOrder(order);
     setClickedData(sortedData); 
   };
-  const DataModal = ({ onClose, dt, canvasref }) => {
+  const DataModal = ({ onClose, dt, canvasref , mtitle,data}) => {
     const dCSV = () => {
       const csvContent = `Selected Todos Status:${dt.Label}\n,Label,Value\n,${dt.Label},${dt.Value}`;
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -207,48 +209,48 @@ const APIChart = ({allt}) => {
         doc.save(`${dt.Label}_Todos.pdf`);
       });
     };
-    const dExcel = () => {
-      const data = [
-        { Label: 'Selected Todo Status', Value: selectedTodoStatus }, 
-        { Label: 'Label', Value: 'Value' }, 
-        { Label: dt.Label, Value: dt.Value } 
-      ];
-    
-      const ws = XLSX.utils.json_to_sheet(data, { skipHeader: true });
-    
-      // Define column widths
-      const wscols = Object.keys(data[0]).map(key => {
-        const maxLength = data.reduce((max, record) => {
-          return Math.max(max, record[key] ? record[key].toString().length : 0);
-        }, key.length);
-        return { width: maxLength + 2 };
-      });
-      
-      ws['!cols'] = wscols;
-    
-      // Apply background color and styles to the header row
-      const headerStyle = {
-        fill: {
-          fgColor: { rgb: 'FFFF00' } // Yellow background color
-        },
-        font: {
-          bold: true, // Bold font for headers
-        }
-      };
-    
-      // Apply the style to specific cells (you can apply it to all rows if necessary)
-      ws['A1'].s = headerStyle; 
-      ws['A2'].s = headerStyle; 
-      ws['B2'].s = headerStyle; 
-    
-      // Create workbook and append the worksheet
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Todos Data');
-    
-      // Write file
-      XLSX.writeFile(wb, `${dt.Label}_Todos_${selectedTodoStatus}.xlsx`);
+const dExcel = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Todos Data');
+
+  worksheet.addRow([`Category of Todos Chosen: ${mtitle}`]);
+
+  const header = ['USERID','ID', 'Title', 'COMPLETED'];
+  const headerRow = worksheet.addRow(header);
+
+  headerRow.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFFF00' },
     };
-    
+  });
+
+  data.forEach((record) => {
+    worksheet.addRow([record.userId, record.id, record.title, record.completed]);
+  });
+
+  worksheet.columns.forEach((column) => {
+    let maxLength = 0;
+    column.eachCell({ includeEmpty: true }, (cell) => {
+      const columnLength = cell.value ? cell.value.toString().length : 10;
+      if (columnLength > maxLength) {
+        maxLength = columnLength;
+      }
+    });
+    column.width = maxLength + 2; 
+  });
+
+  worksheet.autoFilter = {
+    from: 'A2',
+    to: 'D2',
+  };
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  saveAs(blob, `${mtitle}_todosdata.xlsx`);
+};
     
     return (
       <Modal show={showModal} onHide={onClose} size="xl" centered className='mdl'>
@@ -256,7 +258,7 @@ const APIChart = ({allt}) => {
           <Col md='10'>
           <Row >
             <Col md='8' className='d-flex'>
-              <Modal.Title>Todos Status: {dt.Label}</Modal.Title>
+              <Modal.Title>Todos Status: {mtitle}</Modal.Title>
             </Col>
             <Col md='2' className='d-flex justify-content-end'>
               <DropdownButton id="dropdown-basic-button" title="Export Options" >
@@ -390,7 +392,7 @@ const APIChart = ({allt}) => {
       </Form>
       <Doughnut data={defChartData} options={coptions} ref={chartRef} style={{ height: '400px', width: '300px' }}/>
       {showModal && (
-        <DataModal onClose={() => setShowModal(false)} data={clickedData} canvasref={chartRef} dt={downloadTodoData}/>
+        <DataModal onClose={() => setShowModal(false)} data={clickedData} canvasref={chartRef} mtitle={todocategory}/>
       )}
     </div>
   );

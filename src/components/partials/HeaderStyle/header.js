@@ -1,7 +1,7 @@
 import React, { Fragment, memo, useEffect, useState } from "react";
 
 // react-router
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 
 // react-bootstrap
 import { Navbar, Dropdown, Form } from "react-bootstrap";
@@ -31,6 +31,7 @@ const Header = memo(() => {
   // Fixed Header
 
   const location = useLocation();
+  const navigator=useNavigate();
   // const { userid } = location.state || {userid:""};
 
   const [isFixed, setIsFixed] = useState(false);
@@ -67,6 +68,11 @@ const Header = memo(() => {
   const minisidebar = () => {
     setIsClicked(isClicked);
     document.body.classList.toggle('sidebar-main');
+  };
+  const userLogout=()=>{
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userData");
+    navigator("/"); 
   };
   return (
     <Fragment>
@@ -430,7 +436,7 @@ const Header = memo(() => {
                   {location.state?(<div>
                   <div className="caption">
                     <h6 className="mb-0 line-height">{location.state}</h6>
-                    <span className="font-size-12">online</span>
+                    <span className="font-size-12" onClick={userLogout}>Sign-Out</span>
                   </div></div>) :(<p>Sign-In</p>)}
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="iq-sub-dropdown iq-user-dropdown">
