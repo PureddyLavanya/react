@@ -17,6 +17,8 @@ import i3 from '../../../assets/images/login/i3'
 const LoginPage = () => {
     const navigator=useNavigate();
     const [users,setusers]=useState([]);
+    const [errormsg,seterrormsg]=useState();
+    const [erroruser,seterroruser]=useState();
     const [formData,setFormData]=useState({
     username:'',
     userpassword:''
@@ -54,13 +56,15 @@ const LoginPage = () => {
             navigator('/index',{state:user.username});
             }
             else{
-                alert('Invalid user details.Try Again!')
+                navigator('/');
+                seterrormsg('invalid user details!');
             }
         }
         else{
             console.log('Please enter valid data!');
         }
   }
+  console.log(users);
   const validateForm = (data) => {
     const errors = {};
 
@@ -128,6 +132,7 @@ const LoginPage = () => {
                                     </div>
                                     <Button type="submit" className="btn btn-primary float-end" onClick={handlesubmit}>Sign in</Button>
                                 </div>
+                                {errormsg&& (<span className='text-danger text-center'>{errormsg}</span>)}
                                 <div className="sign-info">
                                     <span className="dark-color d-inline-block line-height-2">Don't have an account? <Link to="/sign-up">Sign up</Link></span>
                                     <ul className="iq-social-media">
