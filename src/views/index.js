@@ -173,7 +173,7 @@ console.log(psts);
           </Col>
           <Col lg="12">
               <Row>
-                <Col md='4'style={{width:'400px',}} >
+                <Col md='4'>
                   <APIChart allt={tods} />
                 </Col>
                 <Col md='4'>
