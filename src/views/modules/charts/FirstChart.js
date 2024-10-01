@@ -316,3 +316,11 @@ const FirstChart = ({prods}) => {
 }
 
 export default FirstChart;
+
+
+
+
+
+
+
+

@@ -18,7 +18,6 @@ const LoginPage = () => {
     const navigator=useNavigate();
     const [users,setusers]=useState([]);
     const [errormsg,seterrormsg]=useState();
-    // const [erroruser,seterroruser]=useState();
     const [formData,setFormData]=useState({
     username:'',
     userpassword:''
@@ -47,8 +46,8 @@ const LoginPage = () => {
   function handlesubmit(e){
     e.preventDefault();
     const user=users.find(u=>u.username===formData.username&&u.password===formData.userpassword);
-    // const uname=users.find(u=>u.username===formData.username);
-    // const upassword=users.find(u=>u.password===formData.userpassword);
+    const uname=users.find(u=>u.username===formData.username);
+    const upassword=users.find(u=>u.password===formData.userpassword);
     const newErrors = validateForm(formData);
         setErrors(newErrors);
 
@@ -58,9 +57,13 @@ const LoginPage = () => {
             navigator('/index',{state:user.username});
             }
             else{
-                
+                if(!uname){
+                    seterrormsg('User does not existed!');
+                }
+                else if(uname&&!upassword){
+                    seterrormsg('Password does not match with user name!');
+                }
                 navigator('/');
-                seterrormsg('invalid user details!');
             }
         }
         else{
