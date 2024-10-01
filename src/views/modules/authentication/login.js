@@ -18,7 +18,7 @@ const LoginPage = () => {
     const navigator=useNavigate();
     const [users,setusers]=useState([]);
     const [errormsg,seterrormsg]=useState();
-    const [erroruser,seterroruser]=useState();
+    // const [erroruser,seterroruser]=useState();
     const [formData,setFormData]=useState({
     username:'',
     userpassword:''
@@ -47,6 +47,8 @@ const LoginPage = () => {
   function handlesubmit(e){
     e.preventDefault();
     const user=users.find(u=>u.username===formData.username&&u.password===formData.userpassword);
+    // const uname=users.find(u=>u.username===formData.username);
+    // const upassword=users.find(u=>u.password===formData.userpassword);
     const newErrors = validateForm(formData);
         setErrors(newErrors);
 
@@ -56,6 +58,7 @@ const LoginPage = () => {
             navigator('/index',{state:user.username});
             }
             else{
+                
                 navigator('/');
                 seterrormsg('invalid user details!');
             }
@@ -117,14 +120,14 @@ const LoginPage = () => {
                                 <Form.Group className='form-group'>
                                     <Form.Label htmlFor="exampleInputUserName1" className="mb-2">User Name</Form.Label>
                                     <Form.Control type="text" className="form-control mb-0" id="exampleInputUserName1" placeholder="Enter User Name.." name="username" value={formData.username} onChange={handleChange} />
-                                    {errors&& (<span className='text-danger text-center'>{errors.username}</span>)}
+                                    {/* {errors&& (<span className='text-danger text-center'>{errors.username}</span>)} */}
                                 </Form.Group>
                                 <div className="d-flex justify-content-between my-2">
                                     <Form.Label htmlFor="exampleInputPassword1" className='mb-0'>Password</Form.Label>
                                     <Link to="/recover-password" className="float-end">Forgot password?</Link>
                                 </div>
                                 <Form.Control type="password" className="form-control mb-0" id="exampleInputPassword1" placeholder="Enter Password..." name="userpassword" value={formData.userpassword} onChange={handleChange} />
-                                {errors&& (<span className='text-danger text-center'>{errors.userpassword}</span>)}
+                                {errormsg&& (<span className='text-danger text-center'>{errormsg}</span>)}
                                 <div className="d-flex w-100 justify-content-between  align-items-center mt-3 w-100">
                                     <div className="custom-control custom-checkbox d-inline-block mt-2 pt-1">
                                         <Form.Check.Input type="checkbox" className="custom-control-input" id="customCheck1" />
@@ -132,7 +135,6 @@ const LoginPage = () => {
                                     </div>
                                     <Button type="submit" className="btn btn-primary float-end" onClick={handlesubmit}>Sign in</Button>
                                 </div>
-                                {errormsg&& (<span className='text-danger text-center'>{errormsg}</span>)}
                                 <div className="sign-info">
                                     <span className="dark-color d-inline-block line-height-2">Don't have an account? <Link to="/sign-up">Sign up</Link></span>
                                     <ul className="iq-social-media">
