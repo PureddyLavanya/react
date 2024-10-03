@@ -12,7 +12,7 @@ import {
   OverlayTrigger,
 } from "react-bootstrap";
 
-//Componets
+//Components
 import SidebarMenu from "./sidebar-menu";
 
 function CustomToggle({ children, eventKey, onClick }) {
@@ -79,14 +79,14 @@ const VerticalNav = memo(() => {
                   isTag="false"
                   staticIcon="true"
                   iconClass="ri-user-3-fill"
-                  pathname="/"
-                  title="Dasboard"
+                  pathname="/index"
+                  title="Dashboard"
                 ></SidebarMenu>
                 <SidebarMenu
                   isTag="false"
                   staticIcon="true"
                   iconClass="ri-user-3-fill"
-                  pathname="/1223333"
+                  pathname="/12333"
                   title="Communication Status"
                 ></SidebarMenu>
                 <SidebarMenu
@@ -94,14 +94,14 @@ const VerticalNav = memo(() => {
                   staticIcon="true"
                   iconClass="ri-user-add-fill"
                   pathname="/12345"
-                  title="Data Avilabulity 30days"
+                  title="Data Availability 30days"
                 ></SidebarMenu>
 
 
               </ul>
             </Accordion.Collapse>
           </Accordion.Item>
-          {/* Dashboord End */}
+          {/* Dashboard End */}
 
            {/* start configuration section */}
            <Accordion.Item
@@ -156,7 +156,7 @@ const VerticalNav = memo(() => {
               >
                 <i className="ri-dashboard-fill"></i>
               </OverlayTrigger>
-              <span className="item-name">Mters Details</span>
+              <span className="item-name">Meters Details</span>
               <i className="ri-arrow-right-s-line iq-arrow-right"></i>
             </CustomToggle>
             <Accordion.Collapse eventKey="doctor1-menu">
@@ -174,7 +174,7 @@ const VerticalNav = memo(() => {
             </Accordion.Collapse>
           </Accordion.Item>
 
-         {/* end Mters Details section */}
+         {/* end Meters Details section */}
 
        {/* start Others section */}
            <Accordion.Item
