@@ -33,7 +33,6 @@ const Header = memo(() => {
   const location = useLocation();
   const navigator=useNavigate();
   
-  // const { userid } = location.state || {userid:""};
 
   const [isFixed, setIsFixed] = useState(false);
 
@@ -54,7 +53,7 @@ const Header = memo(() => {
   }, []);
   useEffect(()=>{
     setloggeduser(location.state);
-  },[]);
+  },[location.state]);
 
   const appName = useSelector(SettingSelector.app_name);
   const themeSchemeDirection = useSelector(
@@ -437,11 +436,11 @@ const Header = memo(() => {
                     className="img-fluid rounded mr-3"
                     alt="user"
                   />
-                  {loggeduser?(<div>
+                  {loggeduser?(
                   <div className="caption">
                     <h6 className="mb-0 line-height">{loggeduser}</h6>
                     <span className="font-size-12" onClick={userLogout}>Sign-Out</span>
-                  </div></div>) :(<p>Sign-In</p>)}
+                  </div>) :(<p>Sign-In</p>)}
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="iq-sub-dropdown iq-user-dropdown">
                   <div className="iq-card shadow-none m-0">

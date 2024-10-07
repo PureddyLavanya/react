@@ -42,7 +42,8 @@ const LoginPage = () => {
         }
     };
     getUsers();
-   },[])
+   },[]);
+   console.log(users);
   function handlesubmit(e){
     e.preventDefault();
     const user=users.find(u=>u.username===formData.username&&u.password===formData.userpassword);
